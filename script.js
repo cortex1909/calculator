@@ -5,6 +5,9 @@ const equalButton = document.querySelector('.equal')
 let operationResult = document.querySelector('.calculating')
 let finalResult = document.querySelector('.finalResult')
 let displayOperation = ''
+let firstOperationCheck = 0
+let secondOperationCheck = 0
+let _finalResult = 0
 
 
 let num1 = 0
@@ -31,10 +34,12 @@ operate = (num1, num2, operator) => {
 displayAll = (text) => {
     displayOperation = displayOperation + text
     operationResult.textContent = operationResult.textContent + text
+    console.log(displayOperation)
 }
 
 displayFinalResult = (number) => {
     finalResult.textContent = number
+    _finalResult = number
 }
 
 numberButtons.forEach(numberButton => {
@@ -45,14 +50,37 @@ numberButtons.forEach(numberButton => {
 
 operatorButtons.forEach(operatorButton => {
     operatorButton.addEventListener('click', e => {
-        num1 = displayOperation
-        displayAll(e.target.textContent)
-        operator = e.target.textContent
-        displayOperation = ''
+        if(firstOperationCheck === 0){
+            num1 = parseInt(displayOperation)
+            displayAll(e.target.textContent)
+            operator = e.target.textContent
+            displayOperation = ''
+            firstOperationCheck++
+        } else {
+        if(secondOperationCheck === 0) {
+            num2 = parseInt(displayOperation)
+            displayAll(e.target.textContent)
+            operate(num1, num2, operator)
+            operator = e.target.textContent
+            displayOperation = ''   
+            secondOperationCheck++
+        } else {
+            num1 = parseInt(_finalResult)
+            num2 = parseInt(displayOperation)
+            displayAll(e.target.textContent)
+            operate(num1, num2, operator)
+            operator = e.target.textContent
+            displayOperation = ''   
+        }
+        }
     })
 });
 
 clearButton.addEventListener('click', e => {
+    equalCheck = 0
+    firstOperationCheck = 0
+    secondOperationCheck = 0
+    _finalResult = 0
     num1 = 0
     num2 = 0
     operator = ''
@@ -62,8 +90,13 @@ clearButton.addEventListener('click', e => {
 })
 
 equalButton.addEventListener('click', e => {
-    num2 = displayOperation
-    num1 = parseInt(num1)
-    num2 = parseInt(num2)
-    operate(num1, num2, operator)
+        if(secondOperationCheck === 0) {
+            num2 = parseInt(displayOperation)     
+            num1 = parseInt(num1)
+            operate(num1, num2, operator)
+        } else {
+            num2 = parseInt(displayOperation)     
+            num1 = parseInt(_finalResult)
+            operate(num1, num2, operator)
+        }
 })
